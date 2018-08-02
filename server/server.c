@@ -13,11 +13,13 @@
 #include <time.h>
 #include <unistd.h>
 #include <string.h>
+#include "protocol.h"
 
 int main(int argc, const char * argv[]) {
     int n, nbytes;
     int listenfd, connectfd;
     struct sockaddr_in servaddr;
+    PersonInfoReq personinforeq;
     char buffer[20];
     time_t ticks;
     //create listen socket
@@ -41,14 +43,29 @@ int main(int argc, const char * argv[]) {
         if ((connectfd = accept(listenfd, NULL, 0)) < 0){
             perror("accept error");
         }
-        //specific logic
-        ticks = time(NULL);
-        snprintf(buffer, sizeof(buffer), "%.24s\r\n", ctime(&ticks));
-        //write to connectfd
-        nbytes = strlen(buffer);
-        if ((write(connectfd, buffer, nbytes) < nbytes)) {
-            perror("write error");
+        //read from client
+        while((n = read(connectfd, buffer, 19)) > 0){
+            buffer[n] = 0;
+            if (fputs(buffer, stdout) == EOF){
+                perror("fputs error");
+            }
         }
+        if(n < 0){
+            perror("read error");
+        }
+        printf("receive %d bytes\n", strlen(buffer));
+        memcpy(&personinforeq, &buffer, sizeof(buffer));
+        printf("messageid: %d\n", personinforeq.header.id);
+        printf("person_age: %d\n", personinforeq.age);
+        printf("person_atk: %d\n", personinforeq.atk);
+        //specific logic
+        //ticks = time(NULL);
+        //snprintf(buffer, sizeof(buffer), "%.24s\r\n", ctime(&ticks));
+        ////write to connectfd
+        //nbytes = strlen(buffer);
+        //if ((write(connectfd, buffer, nbytes) < nbytes)) {
+        //    perror("write error");
+        //}
         //close connectfd
         close(connectfd);
     }
