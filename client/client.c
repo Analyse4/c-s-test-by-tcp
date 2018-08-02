@@ -6,6 +6,19 @@
 #include <unistd.h>
 #include "protocol.h"
 
+int Test1(){
+    //fill req
+    PersonalInfoReq personinforeq;
+    personinforeq.header.id = 1;
+    personinforeq.age = 10;
+    personinforeq.atk = 20;
+    //write to server
+    if((n = write(sockfd, &personinforeq, sizeof(personinforeq))) < sizeof(personinforeq)){
+        perror("write error");
+    }
+    return 0;
+}
+
 
 int main(int argc, char **argv)
 {
