@@ -1,3 +1,11 @@
+//
+//client.c
+//cstest
+//
+//Created by logic_04 on 2018/8/1.
+//Copyright @ 2018 logic_04. All right reserved.
+//
+
 #include<stdio.h>
 #include<sys/types.h>
 #include<sys/socket.h>
@@ -6,9 +14,10 @@
 #include <unistd.h>
 #include "protocol.h"
 
-int Test1(){
+int Test1(int sockfd){
+    int n = 0;
     //fill req
-    PersonalInfoReq personinforeq;
+    PersonInfoReq personinforeq;
     personinforeq.header.id = 1;
     personinforeq.age = 10;
     personinforeq.atk = 20;
@@ -22,7 +31,7 @@ int Test1(){
 
 int main(int argc, char **argv)
 {
-    int sockfd, n, counter = 0;
+    int sockfd, counter = 0;
     char buffer[1024 + 1];
     struct sockaddr_in servaddr;
     PersonInfoReq personinforeq;
@@ -45,15 +54,19 @@ int main(int argc, char **argv)
     if (connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0){
         perror("connect error");
     }
+    //test1
+    Test1(sockfd);
+
+
     //fill req
-    personinforeq.header.id = 1;
-    personinforeq.age = 10;
-    personinforeq.atk = 20;
-    //write to server
-    if((n = write(sockfd, &personinforeq, sizeof(personinforeq))) < sizeof(personinforeq)){
-        perror("write error");
-    }
-    //read
+    //personinforeq.header.id = 1;
+    //personinforeq.age = 10;
+    //personinforeq.atk = 20;
+    ////write to server
+    //if((n = write(sockfd, &personinforeq, sizeof(personinforeq))) < sizeof(personinforeq)){
+    //    perror("write error");
+    //}
+    ////read
    // while((n =  read(sockfd, buffer, 1024)) > 0){
    //     counter++;
    //     //null terminate

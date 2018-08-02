@@ -1,9 +1,9 @@
 //
-//  main.c
-//  cstest2
+//  server.c
+//  cstest
 //
-//  Created by Ozil on 2018/8/1.
-//  Copyright © 2018年 Ozil. All rights reserved.
+//  Created by logic_04 on 2018/8/1.
+//  Copyright © 2018年 logic_04. All rights reserved.
 //
 
 #include <stdio.h>
@@ -13,7 +13,18 @@
 #include <time.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 #include "protocol.h"
+
+
+int OnMsg(const char * buffer)
+{
+    Header * pheader = (Header *)malloc(sizeof(Header));
+    memcpy(pheader, buffer, sizeof(Header));
+    printf("message id is %d\n", pheader->id);
+}
+
+
 
 int main(int argc, const char * argv[]) {
     int n, nbytes;
@@ -53,11 +64,16 @@ int main(int argc, const char * argv[]) {
         if(n < 0){
             perror("read error");
         }
+
+        //OnMsg(buffer);
+
         printf("receive %d bytes\n", strlen(buffer));
         memcpy(&personinforeq, &buffer, sizeof(buffer));
         printf("messageid: %d\n", personinforeq.header.id);
         printf("person_age: %d\n", personinforeq.age);
         printf("person_atk: %d\n", personinforeq.atk);
+
+        OnMsg(buffer);
         //specific logic
         //ticks = time(NULL);
         //snprintf(buffer, sizeof(buffer), "%.24s\r\n", ctime(&ticks));
