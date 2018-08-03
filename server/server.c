@@ -19,9 +19,24 @@
 
 int OnMsg(const char * buffer)
 {
+    PersonInfoReq personinforeq;
     Header * pheader = (Header *)malloc(sizeof(Header));
     memcpy(pheader, buffer, sizeof(Header));
     printf("message id is %d\n", pheader->id);
+    switch(pheader->id){
+        case 1:
+            memcpy(&personinforeq, buffer, sizeof(PersonInfoReq));
+            printf("messageid: %d\n", personinforeq.header.id);
+            printf("person_age: %d\n", personinforeq.age);
+            printf("person_atk: %d\n", personinforeq.atk);
+
+            break;
+        case 2:
+            //TODO:
+            break;
+        default:
+            printf("The message is undefined!\n");
+    }
 }
 
 
@@ -32,6 +47,7 @@ int main(int argc, const char * argv[]) {
     struct sockaddr_in servaddr;
     PersonInfoReq personinforeq;
     char buffer[20];
+    memset(buffer , 0, 20);
     time_t ticks;
     //create listen socket
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -64,15 +80,13 @@ int main(int argc, const char * argv[]) {
         if(n < 0){
             perror("read error");
         }
-
-        //OnMsg(buffer);
-
         printf("receive %d bytes\n", strlen(buffer));
-        memcpy(&personinforeq, &buffer, sizeof(buffer));
+        memcpy(&personinforeq, buffer, sizeof(PersonInfoReq));
+
         printf("messageid: %d\n", personinforeq.header.id);
         printf("person_age: %d\n", personinforeq.age);
         printf("person_atk: %d\n", personinforeq.atk);
-
+        //消息处理
         OnMsg(buffer);
         //specific logic
         //ticks = time(NULL);
