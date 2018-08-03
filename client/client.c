@@ -21,10 +21,26 @@ int Test1(int sockfd){
     personinforeq.header.id = 1;
     personinforeq.age = 10;
     personinforeq.atk = 20;
+    //init msg ack
+    PersonInfoAck personinfoack;
     //write to server
     if((n = write(sockfd, &personinforeq, sizeof(personinforeq))) < sizeof(personinforeq)){
         perror("write error");
     }
+    //read from server
+
+    sleep(1);
+
+    while((n = read(sockfd, &personinfoack, sizeof(personinfoack))) > 0){
+        printf("messageid: %d\n", personinfoack.header.id);
+        printf("person_age: %d\n", personinfoack.age);
+        printf("person_atk; %d\n", personinfoack.atk);
+    }
+    if (n < 0){
+        perror("read error");
+    }
+
+
     return 0;
 }
 

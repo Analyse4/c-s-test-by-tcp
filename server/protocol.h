@@ -5,6 +5,7 @@ typedef struct
 }Header;
 
 //personal info
+#define Msg_PersonInfoReq 1
 typedef struct
 {
     Header  header;

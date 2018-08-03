@@ -17,19 +17,39 @@
 #include "protocol.h"
 
 
-int OnMsg(const char * buffer)
+int PersonInfoReqHandle(const char * buffer, int connectfd)
 {
+    int nbytes = 0;
     PersonInfoReq personinforeq;
+    PersonInfoAck personinfoack;
+    memcpy(&personinforeq, buffer, sizeof(PersonInfoReq));
+    // print msg
+    printf("messageid: %d\n", personinforeq.header.id);
+    printf("person_age: %d\n", personinforeq.age);
+    printf("person_atk: %d\n", personinforeq.atk);
+    //edit msg ack
+    personinfoack.header.id = personinforeq.header.id;
+    personinfoack.age = personinforeq.age;
+    personinfoack.atk = personinforeq.atk + 10;
+    //write to connectfd
+    nbytes = sizeof(PersonInfoAck);
+    if ((write(connectfd, &personinfoack, nbytes) < nbytes)) {
+        perror("write error");
+    }
+
+}
+
+
+int OnMsg(const char * buffer, int connectfd)
+{
+    printf("in on msg\n");
     Header * pheader = (Header *)malloc(sizeof(Header));
     memcpy(pheader, buffer, sizeof(Header));
     printf("message id is %d\n", pheader->id);
     switch(pheader->id){
-        case 1:
-            memcpy(&personinforeq, buffer, sizeof(PersonInfoReq));
-            printf("messageid: %d\n", personinforeq.header.id);
-            printf("person_age: %d\n", personinforeq.age);
-            printf("person_atk: %d\n", personinforeq.atk);
-
+        case Msg_PersonInfoReq:
+            printf("in msg_personinforeq");
+            PersonInfoReqHandle(buffer, connectfd);
             break;
         case 2:
             //TODO:
@@ -81,13 +101,13 @@ int main(int argc, const char * argv[]) {
             perror("read error");
         }
         printf("receive %d bytes\n", strlen(buffer));
-        memcpy(&personinforeq, buffer, sizeof(PersonInfoReq));
+        //memcpy(&personinforeq, buffer, sizeof(PersonInfoReq));
 
-        printf("messageid: %d\n", personinforeq.header.id);
-        printf("person_age: %d\n", personinforeq.age);
-        printf("person_atk: %d\n", personinforeq.atk);
+        //printf("messageid: %d\n", personinforeq.header.id);
+        //printf("person_age: %d\n", personinforeq.age);
+        //printf("person_atk: %d\n", personinforeq.atk);
         //消息处理
-        OnMsg(buffer);
+        OnMsg(buffer, connectfd);
         //specific logic
         //ticks = time(NULL);
         //snprintf(buffer, sizeof(buffer), "%.24s\r\n", ctime(&ticks));
