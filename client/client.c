@@ -88,8 +88,7 @@ int Test1(int sockfd){
     if (n < 0){
         perror("read error");
     }
-    
-    
+
     return 0;
 }
 

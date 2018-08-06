@@ -36,11 +36,13 @@ int PersonInfoReqHandle(const char * buffer, int connectfd)
     if ((write(connectfd, &personinfoack, nbytes) < nbytes)) {
         perror("write error");
     }
+	
     return 0;
 }
 
 
-void OnMsg(const char * buffer, int connectfd)
+
+int OnMsg(const char * buffer, int connectfd)
 {
     printf("in on msg\n");
     Header * pheader = (Header *)malloc(sizeof(Header));
@@ -121,7 +123,7 @@ int main(int argc, const char * argv[]) {
         
         printf("receive %d bytes\n", strlen(buffer));
         //memcpy(&personinforeq, buffer, sizeof(PersonInfoReq));
-        
+
         //printf("messageid: %d\n", personinforeq.header.id);
         //printf("person_age: %d\n", personinforeq.age);
         //printf("person_atk: %d\n", personinforeq.atk);
